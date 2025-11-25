@@ -1,7 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="model.Cart" %>
-<%@ page import="model.LineItem" %>
-<%@ page import="java.util.List" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -34,51 +32,42 @@
                 </tr>
             </thead>
             <tbody>
-                <% 
-                    // 1. Lấy giỏ hàng từ Session bằng Java thuần
-                    Cart cart = (Cart) session.getAttribute("cart");
-                    
-                    // 2. Kiểm tra giỏ hàng trống
-                    if (cart == null || cart.getItems().isEmpty()) {
-                %>
-                    <tr>
-                        <td colspan="5" style="text-align:center; padding: 20px;">
-                            Your cart is empty.
-                        </td>
-                    </tr>
-                <% 
-                    } else {
-                        // 3. Vòng lặp Java thuần (Thay thế cho c:forEach)
-                        List<LineItem> items = cart.getItems();
-                        for (LineItem item : items) {
-                %>
-                    <tr>
-                        <td>
-                            <form action="addToCart" method="post">
-                                <input type="hidden" name="productCode" value="<%= item.getProduct().getCode() %>">
-                                <input type="text" class="qty-input" name="quantity" value="<%= item.getQuantity() %>">
-                                <button type="submit">Update</button>
-                            </form>
-                        </td>
-                        
-                        <td class="cart-desc-col"><%= item.getProduct().getDescription() %></td>
-                        
-                        <td class="price"><%= item.getProduct().getPriceCurrencyFormat() %></td>
-                        
-                        <td class="price"><%= item.getTotalCurrencyFormat() %></td>
-                        
-                        <td>
-                            <form action="addToCart" method="post">
-                                <input type="hidden" name="productCode" value="<%= item.getProduct().getCode() %>">
-                                <input type="hidden" name="quantity" value="0">
-                                <button type="submit">Remove Item</button>
-                            </form>
-                        </td>
-                    </tr>
-                <% 
-                        } // Kết thúc vòng for
-                    } // Kết thúc else
-                %>
+                <c:choose>
+                    <c:when test="${empty cart || empty cart.items}">
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding: 20px;">
+                                Your cart is empty.
+                            </td>
+                        </tr>
+                    </c:when>
+                    <c:otherwise>
+                        <c:forEach var="item" items="${cart.items}">
+                            <tr>
+                                <td>
+                                    <form action="addToCart" method="post">
+                                        <input type="hidden" name="productCode" value="${item.product.code}">
+                                        <input type="text" class="qty-input" name="quantity" value="${item.quantity}">
+                                        <button type="submit">Update</button>
+                                    </form>
+                                </td>
+                                
+                                <td class="cart-desc-col">${item.product.description}</td>
+                                
+                                <td class="price">${item.product.priceCurrencyFormat}</td>
+                                
+                                <td class="price">${item.totalCurrencyFormat}</td>
+                                
+                                <td>
+                                    <form action="addToCart" method="post">
+                                        <input type="hidden" name="productCode" value="${item.product.code}">
+                                        <input type="hidden" name="quantity" value="0">
+                                        <button type="submit">Remove Item</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </c:otherwise>
+                </c:choose>
             </tbody>
         </table>
 

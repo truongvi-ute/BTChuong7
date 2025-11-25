@@ -29,93 +29,77 @@ public class CartServlet extends HttpServlet {
         
         String productCode = request.getParameter("productCode");
         String quantityString = request.getParameter("quantity");
+//        System.out.println("ProductCode: "+ productCode);
+//        System.out.println("Quantity: "+quantityString);
 
         HttpSession session = request.getSession();
-        Cart cart = (Cart) session.getAttribute("cart");
-        if (cart == null) {
-            cart = new Cart();
-        }
-
-        // Tìm sản phẩm (Giữ nguyên switch-case)
-        Product product = null;
-        if (productCode != null) {
-            switch (productCode) {
-                case "8601": product = new Product("8601", "86 (the band) - True Life Songs and Pictures", 14.95); break;
-                case "pf01": product = new Product("pf01", "Paddlefoot - The first CD", 12.95); break;
-                case "pf02": product = new Product("pf02", "Paddlefoot - The second CD", 14.95); break;
-                case "jr01": product = new Product("jr01", "Joe Rut - Genuine Wood Grained Finish", 14.95); break;
-                default: product = null; break;
+        synchronized(session) {
+            Cart cart = (Cart) session.getAttribute("cart");
+            if (cart == null) {
+                cart = new Cart();
             }
-        }
 
-        if (product != null) {
-            url = "/cart.jsp"; 
+            // Tìm sản phẩm (Giữ nguyên switch-case)
+            Product product = null;
 
-            // LOGIC XỬ LÝ SỐ LƯỢNG
-            if (quantityString != null) {
-                int quantityInput;
-                try {
-                    quantityInput = Integer.parseInt(quantityString);
-                } catch (NumberFormatException e) {
-                    quantityInput = 1;
-                }
+            if (productCode != null) {
+                product = switch (productCode) {
+                    case "8601" -> new Product("8601", "86 (the band) - True Life Songs and Pictures", 14.95);
+                    case "pf01" -> new Product("pf01", "Paddlefoot - The first CD", 12.95);
+                    case "pf02" -> new Product("pf02", "Paddlefoot - The second CD", 14.95);
+                    case "jr01" -> new Product("jr01", "Joe Rut - Genuine Wood Grained Finish", 14.95);
+                    default -> null;
+                };
+            }
 
-                if (quantityInput > 0) {
-                    // 1. TRƯỜNG HỢP UPDATE (Người dùng nhập số cụ thể: 2, 5, 10...)
-                    // Cập nhật đúng số lượng đó
-                    LineItem item = new LineItem(product, quantityInput);
-                    cart.addItem(item); 
-                } else {
-                    // 2. TRƯỜNG HỢP REMOVE/GIẢM (Nút Remove gửi số 0)
-                    // Yêu cầu: Giảm 1 đơn vị. Nếu về 0 thì xóa.
-                    
-                    // Bước A: Phải tìm xem sản phẩm này đang có bao nhiêu cái trong giỏ?
-                    LineItem existingItem = null;
-                    for (LineItem item : cart.getItems()) {
-                        if (item.getProduct().getCode().equals(productCode)) {
-                            existingItem = item;
-                            break;
-                        }
-                    }
-
-                    // Bước B: Tính toán trừ đi 1
-                    if (existingItem != null) {
-                        int currentQty = existingItem.getQuantity();
-                        int newQty = currentQty - 1;
-
-                        if (newQty > 0) {
-                            // Nếu vẫn còn > 0 thì cập nhật số lượng mới
-                            existingItem.setQuantity(newQty);
-                        } else {
-                            // Nếu = 0 thì xóa hẳn khỏi giỏ
-                            cart.removeItem(existingItem);
-                        }
-                    }
-                }
-            } else {
-                // 3. TRƯỜNG HỢP ADD NEW (Từ trang chủ)
-                // Logic cũ: setQuantity(1). 
-                // Nếu muốn thông minh hơn (cộng dồn khi bấm Add nhiều lần):
-                LineItem existingItem = null;
-                for (LineItem item : cart.getItems()) {
-                    if (item.getProduct().getCode().equals(productCode)) {
-                        existingItem = item;
+            if (product != null) {
+                url = "/cart.jsp"; 
+                LineItem curLineItem = null;
+                for (LineItem i : cart.getItems())
+                {
+                    if(product.getCode().equals(i.getProduct().getCode()))
+                    {
+                        curLineItem = i;
                         break;
                     }
                 }
-                
-                if (existingItem != null) {
-                    // Nếu đã có -> Tăng thêm 1
-                    existingItem.setQuantity(existingItem.getQuantity() + 1);
-                } else {
-                    // Nếu chưa có -> Thêm mới số lượng 1
-                    LineItem item = new LineItem(product, 1);
-                    cart.addItem(item);
+                // Xử lí khi thêm sản phẩm từ trang html
+                if (quantityString == null){
+                    // nếu đã có trong cart
+                    if(curLineItem != null)
+                    {
+                        curLineItem.setQuantity(curLineItem.getQuantity()+1);                
+                    }
+                    // nếu chưa có trong cart
+                    else
+                    {
+                        curLineItem = new LineItem (product, 1);
+                        cart.addItem(curLineItem);
+                    }
+                }
+                else    // Xử lí khi update số lượng hoặc xóa sản phẩm
+                {
+                    int intQuantity;
+                    try {
+                        intQuantity = Integer.parseInt(quantityString);
+                    } catch (NumberFormatException e) {
+                        intQuantity = 1; // Mặc định là 1 nếu lỗi
+                    }
+
+                    if (intQuantity <= 0)   //thực hiện xóa
+                    {
+                        cart.removeItem(curLineItem);
+                    }
+                    else    //thực hiện update
+                    {
+                        if (curLineItem != null) {
+                            curLineItem.setQuantity(intQuantity);
+                        }
+                    }
                 }
             }
+            session.setAttribute("cart", cart);
         }
-
-        session.setAttribute("cart", cart);
         getServletContext().getRequestDispatcher(url).forward(request, response);
     }
 }
