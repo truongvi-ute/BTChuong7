@@ -1,0 +1,77 @@
+/* Thiết lập phông chữ cơ bản */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+/* Tiêu đề "CD list" */
+.page-title {
+    color: teal; /* Màu xanh cổ vịt đậm giống hình */
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Cấu trúc bảng */
+.cd-table {
+    width: 100%;
+    max-width: 800px; /* Giới hạn chiều rộng để dễ nhìn */
+    border-collapse: collapse; /* Gộp đường viền đôi thành đơn */
+    border: 1px solid black;
+}
+
+/* Định dạng các ô tiêu đề (th) và ô dữ liệu (td) */
+.cd-table th, 
+.cd-table td {
+    border: 1px solid black;
+    padding: 10px;
+    vertical-align: middle;
+}
+
+/* Định dạng hàng tiêu đề */
+.cd-table th {
+    font-weight: bold;
+    color: black;
+}
+
+/* Căn chỉnh cột Description */
+.col-desc {
+    text-align: left;
+}
+
+/* Căn chỉnh cột Price */
+.col-price, 
+.price {
+    text-align: right;
+    width: 80px; /* Độ rộng cố định cho cột giá */
+}
+
+/* Căn chỉnh cột Action (Nút bấm) */
+.col-action,
+.action {
+    width: 120px;
+    text-align: center;
+}
+
+/* Thiết kế nút bấm (Button) */
+button {
+    background: #e0e0e0; /* Màu nền xám nhẹ */
+    background: linear-gradient(to bottom, #f0f0f0, #dcdcdc); /* Hiệu ứng gradient nhẹ */
+    border: 1px solid #707070;
+    border-radius: 3px;
+    padding: 3px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    color: black;
+}
+
+button:active {
+    background: #ccc; /* Hiệu ứng khi nhấn nút */
+}
+
+.action form {
+            margin: 0;
+            padding: 0;
+            display: inline-block;
+        }.cart-instructions {
+
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CD List</title>
+    <link rel="stylesheet" href="styles/main.css" type="text/css"/>
+</head>
+<body>
+
+    <main class="container">
+        
+        <h2 class="page-title">CD list</h2>
+
+        <table class="cd-table">
+            <thead>
+                <tr>
+                    <th class="col-desc">Description</th>
+                    <th class="col-price">Price</th>
+                    <th class="col-action"></th> 
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>86 (the band) - True Life Songs and Pictures</td>
+                    <td class="price">$14.95</td>
+                    <td class="action">
+                        <form action="addToCart" method="post">
+                            <input type="hidden" name="productCode" value="8601">                         
+                            <button type="submit">Add To Cart</button>
+                        </form>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Paddlefoot - The first CD</td>
+                    <td class="price">$12.95</td>
+                    <td class="action">
+                        <form action="addToCart" method="post">
+                            <input type="hidden" name="productCode" value="pf01">
+                            <button type="submit">Add To Cart</button>
+                        </form>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Paddlefoot - The second CD</td>
+                    <td class="price">$14.95</td>
+                    <td class="action">
+                        <form action="addToCart" method="post">
+                            <input type="hidden" name="productCode" value="pf02">
+                            <button type="submit">Add To Cart</button>
+                        </form>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Joe Rut - Genuine Wood Grained Finish</td>
+                    <td class="price">$14.95</td>
+                    <td class="action">
+                        <form action="addToCart" method="post">
+                            <input type="hidden" name="productCode" value="jr01">
+                            <button type="submit">Add To Cart</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </main>
+
+</body>
+</html>
