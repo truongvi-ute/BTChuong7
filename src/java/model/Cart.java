@@ -1,8 +1,10 @@
 package model;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Cart implements Serializable {
     
@@ -49,5 +51,18 @@ public class Cart implements Serializable {
                 return;
             }
         }
+    }
+    
+    public double getTotal() {
+        double total = 0;
+        for (LineItem item : items) {
+            total += item.getTotal();
+        }
+        return total;
+    }
+    
+    public String getTotalCurrencyFormat() {
+        NumberFormat currency = NumberFormat.getCurrencyInstance(Locale.US);
+        return currency.format(getTotal());
     }
 }
